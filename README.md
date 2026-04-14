@@ -1,50 +1,88 @@
-# Welcome to your Expo app 👋
+# ShiftManager 👋
+**ShiftManager** is a high-performance, cross-platform attendance and scheduling solution for healthcare environments. Built with **React Native (Expo)** and **Firebase**, it bridges the gap between administrative management and frontline medical staff.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## 🚀 Core Features
 
-## Get started
+### 🔐 Multi-Role Authentication
+* **Admin Dashboard**: Centralized control for managing nurses, shift scheduling, and viewing hospital-wide reports.
+* **Nurse Portal**: Personalized dashboard for medical staff to view upcoming shifts and track their duty status.
 
-1. Install dependencies
+### 💳 Attendance Kiosk Mode
+* A dedicated, high-visibility terminal interface designed for **RFID/Card tap simulation**.
+* Real-time "Scanner Active" feedback with a specialized UI for fast-paced hospital entries.
 
-   ```bash
-   npm install
-   ```
+### 📱 Full Cross-Platform Support
+* **Web**: Optimized for desktop admin management.
+* **Mobile**: Native performance for nurses on the go (iOS/Android) via Expo Go.
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## 🛠️ Tech Stack
+* **Frontend**: React Native, Expo Router (File-based routing)
+* **Language**: TypeScript
+* **Backend**: Firebase (Authentication & Firestore)
+* **Styling**: Adaptive StyleSheet with high-contrast Kiosk Mode
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+## 📁 Project Structure
+```text
+ShiftManager/
+├── app/
+│   ├── admin/           # Administrative controls & reports
+│   ├── nurses/          # Nurse-specific dashboards
+│   ├── attendance.tsx   # RFID Kiosk Terminal
+│   ├── signup.tsx       # Nurse registration with role assignment
+│   └── index.tsx        # Unified role-based login gate
+├── config/
+│   └── firebase.ts      # Database & Auth configuration
+└── utils/               # Shift and grade export helpers
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 🚦 Getting Started
 
-To learn more about developing your project with Expo, look at the following resources:
+### 1. Installation
+```bash
+npm install
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 2. Configure Firebase
+Create a `config/firebase.ts` file and add your web configuration:
+```typescript
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  // ... rest of config
+};
+```
 
-## Join the community
+### 3. Run the Project
+```bash
+# Start Expo
+npx expo start
 
-Join our community of developers creating universal apps.
+# Choose your platform:
+# Press 'w' for Web
+# Press 'a' for Android
+# Press 'i' for iOS
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## 🧪 Testing Credentials
+* **Admin Email**: `admin@gmail.com`
+* **Password**: `password`
+* **Nurse Login**: Create a new account via the **Sign Up** link on the login page.
+
+---
+
+### Key Improvements Made:
+1.  **Project Context**: It no longer looks like an Expo starter template; it looks like a specific "Healthcare IT" tool.
+2.  **Clearer Hierarchy**: Used distinct sections for Features, Tech Stack, and Structure.
+3.  **Setup Guide**: Added a placeholder for Firebase configuration so other developers know what's needed to make it run.
+4.  **Credential Transparency**: Clearly marked how to test the Admin vs. Nurse roles.
+
+**Pro-Tip:** Once you push this to GitHub, take a screenshot of your **Kiosk Mode** and **Dashboard** and put them in a `screenshots/` folder. Adding those images to the README makes a huge difference in "First Impressions"!
