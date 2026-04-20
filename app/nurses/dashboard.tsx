@@ -1,11 +1,64 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { auth } from '../../config/firebase';
+import { auth, db } from '../../config/firebase'; 
+import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { Ionicons } from '@expo/vector-icons';
+
+// 1. Define the Shift Interface
+export interface Shift {
+  id: string;
+  nurseId: string;
+  nurseName: string;
+  date: string | null;
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+  isRecurring: boolean;
+  createdAt: string;
+}
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function NurseDashboard() {
   const router = useRouter();
   const user = auth.currentUser;
+  
+  const [myShifts, setMyShifts] = useState<Shift[]>([]);
+  const [isOnDuty, setIsOnDuty] = useState(false);
+
+  // Date Logic for Status Checking
+  const today = new Date().toISOString().split('T')[0];
+  const dayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+
+  // Get first letter for Profile Avatar
+  const userInitial = user?.email?.charAt(0).toUpperCase() || 'N';
+
+  useEffect(() => {
+    if (!user) return;
+
+    const q = query(
+      collection(db, "schedules"),
+      where("nurseId", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+
+    const unsub = onSnapshot(q, (snap) => {
+      const fetchedShifts = snap.docs.map(d => ({ 
+        id: d.id, 
+        ...(d.data() as Omit<Shift, 'id'>) 
+      })) as Shift[];
+
+      setMyShifts(fetchedShifts);
+
+      const hasShiftToday = fetchedShifts.some(shift => 
+        shift.date === today || (shift.isRecurring && shift.dayOfWeek === dayName)
+      );
+      setIsOnDuty(hasShiftToday);
+    });
+
+    return () => unsub();
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -18,118 +71,140 @@ export default function NurseDashboard() {
 
   return (
     <View style={styles.container}>
-      {/* Header Section */}
+      {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.welcomeText}>Hello, Nurse</Text>
-          <Text style={styles.emailText}>{user?.email}</Text>
+          <Text style={styles.headerSubtitle}>Nurse Personnel</Text>
+          <Text style={styles.headerTitle}>{user?.email?.split('@')[0] || 'Dashboard'}</Text>
         </View>
-        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-          <Text style={styles.logoutBtnText}>Logout</Text>
-        </TouchableOpacity>
+        
+        {/* ACTION BUTTONS GROUP */}
+        <View style={styles.headerActions}>
+          <TouchableOpacity 
+            style={styles.profileBtn} 
+            onPress={() => router.push('/nurses/profile')}
+          >
+            <View style={styles.avatarCircle}>
+              <Text style={styles.avatarInitial}>{userInitial}</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={20} color="#EF4444" />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Status Card */}
-        <View style={styles.statusCard}>
-          <Text style={styles.cardTitle}>Current Status</Text>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>OFF DUTY</Text>
-          </View>
-          <Text style={styles.infoText}>Next Shift: Tomorrow, 7:00 AM</Text>
-        </View>
-
-        {/* Schedule Preview */}
-        <Text style={styles.sectionHeader}>Upcoming Shifts</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
-        <View style={styles.shiftItem}>
-          <View style={styles.shiftDate}>
-            <Text style={styles.dateDay}>15</Text>
-            <Text style={styles.dateMonth}>APR</Text>
+        {/* Duty Status Card */}
+        <View style={[styles.statusCard, !isOnDuty && styles.statusCardOff]}>
+          <View style={styles.statusHeader}>
+            <Text style={styles.cardLabel}>CURRENT ASSIGNMENT</Text>
+            <Ionicons name={isOnDuty ? "flash" : "notifications-off"} size={18} color="#fff" />
           </View>
-          <View style={styles.shiftInfo}>
-            <Text style={styles.shiftName}>Morning Shift</Text>
-            <Text style={styles.shiftTime}>07:00 AM - 03:00 PM</Text>
-          </View>
+          <Text style={styles.statusValue}>{isOnDuty ? "ON DUTY" : "OFF DUTY"}</Text>
+          <Text style={styles.statusSubtext}>
+            {isOnDuty ? "You have a scheduled shift for today." : "No active shifts found for today."}
+          </Text>
         </View>
 
-        <View style={styles.shiftItem}>
-          <View style={styles.shiftDate}>
-            <Text style={styles.dateDay}>16</Text>
-            <Text style={styles.dateMonth}>APR</Text>
-          </View>
-          <View style={styles.shiftInfo}>
-            <Text style={styles.shiftName}>Morning Shift</Text>
-            <Text style={styles.shiftTime}>07:00 AM - 03:00 PM</Text>
-          </View>
+        <View style={styles.sectionRow}>
+          <Text style={styles.sectionHeading}>My Schedule Logs</Text>
+          <Ionicons name="calendar" size={16} color="#64748B" />
         </View>
 
+        {myShifts.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>No shifts have been assigned to you yet.</Text>
+          </View>
+        ) : (
+          myShifts.map((item) => {
+            const isToday = item.date === today || (item.isRecurring && item.dayOfWeek === dayName);
+            return (
+              <View key={item.id} style={[styles.shiftCard, isToday && styles.shiftCardActive]}>
+                <View style={[styles.dateBadge, isToday && styles.dateBadgeActive]}>
+                  <Text style={[styles.dateText, isToday && {color: '#fff'}]}>
+                    {item.isRecurring ? item.dayOfWeek.substring(0, 3).toUpperCase() : item.date?.split('-')[2]}
+                  </Text>
+                  <Text style={[styles.monthText, isToday && {color: 'rgba(255,255,255,0.7)'}]}>
+                    {item.isRecurring ? "WEEK" : "APR"}
+                  </Text>
+                </View>
+                
+                <View style={styles.shiftDetails}>
+                  <Text style={styles.shiftTime}>{item.startTime} - {item.endTime}</Text>
+                  <Text style={styles.shiftType}>
+                    {item.isRecurring ? `Recurring Every ${item.dayOfWeek}` : `Scheduled: ${item.date}`}
+                  </Text>
+                </View>
+
+                {isToday && (
+                  <View style={styles.activeDotContainer}>
+                    <View style={styles.activeDot} />
+                  </View>
+                )}
+              </View>
+            );
+          })
+        )}
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f9fa' },
+  container: { flex: 1, backgroundColor: '#F8FAFC' },
   header: { 
     backgroundColor: '#fff', 
     paddingTop: 60, 
-    paddingHorizontal: 25, 
+    paddingHorizontal: 24, 
     paddingBottom: 20, 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee'
+    borderBottomColor: '#F1F5F9'
   },
-  welcomeText: { fontSize: 24, fontWeight: 'bold', color: '#202124' },
-  emailText: { fontSize: 14, color: '#5f6368' },
-  logoutBtn: { paddingVertical: 8, paddingHorizontal: 15, borderRadius: 8, backgroundColor: '#feeef0' },
-  logoutBtnText: { color: '#d93025', fontWeight: '600' },
-  scrollContent: { padding: 25 },
-  statusCard: { 
-    backgroundColor: '#1a73e8', 
-    padding: 25, 
-    borderRadius: 20, 
-    marginBottom: 30,
-    elevation: 4,
-    shadowColor: '#1a73e8',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 15,
-  },
-  cardTitle: { color: 'rgba(255,255,255,0.8)', fontSize: 14, fontWeight: '600', marginBottom: 10 },
-  statusBadge: { 
-    backgroundColor: 'rgba(255,255,255,0.2)', 
-    alignSelf: 'flex-start', 
-    paddingHorizontal: 12, 
-    paddingVertical: 6, 
-    borderRadius: 10,
-    marginBottom: 15
-  },
-  statusText: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
-  infoText: { color: '#fff', fontSize: 14 },
-  sectionHeader: { fontSize: 18, fontWeight: 'bold', color: '#202124', marginBottom: 15 },
-  shiftItem: { 
-    backgroundColor: '#fff', 
-    flexDirection: 'row', 
-    padding: 15, 
-    borderRadius: 15, 
-    marginBottom: 12,
+  headerSubtitle: { fontSize: 11, color: '#94A3B8', fontWeight: '800', textTransform: 'uppercase' },
+  headerTitle: { fontSize: 22, fontWeight: '900', color: '#1E293B' },
+  
+  // Header Action Styles
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  profileBtn: { padding: 2 },
+  avatarCircle: { 
+    width: 42, 
+    height: 42, 
+    borderRadius: 21, 
+    backgroundColor: '#0F172A', 
+    justifyContent: 'center', 
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#eee'
+    borderWidth: 2,
+    borderColor: '#F1F5F9'
   },
-  shiftDate: { 
-    backgroundColor: '#f1f3f4', 
-    padding: 10, 
-    borderRadius: 10, 
-    alignItems: 'center', 
-    width: 60 
-  },
-  dateDay: { fontSize: 18, fontWeight: 'bold', color: '#202124' },
-  dateMonth: { fontSize: 12, color: '#5f6368', fontWeight: 'bold' },
-  shiftInfo: { marginLeft: 15 },
-  shiftName: { fontSize: 16, fontWeight: '600', color: '#202124' },
-  shiftTime: { fontSize: 14, color: '#5f6368', marginTop: 2 }
+  avatarInitial: { color: '#fff', fontSize: 16, fontWeight: '800' },
+  logoutBtn: { width: 42, height: 42, backgroundColor: '#FEF2F2', borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+
+  scrollContent: { padding: 20 },
+  statusCard: { backgroundColor: '#1a73e8', padding: 22, borderRadius: 24, marginBottom: 25, elevation: 6 },
+  statusCardOff: { backgroundColor: '#334155' },
+  statusHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  cardLabel: { color: 'rgba(255,255,255,0.6)', fontSize: 10, fontWeight: '800' },
+  statusValue: { color: '#fff', fontSize: 26, fontWeight: '900' },
+  statusSubtext: { color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 4 },
+  sectionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 15 },
+  sectionHeading: { fontSize: 16, fontWeight: '800', color: '#1E293B' },
+  shiftCard: { backgroundColor: '#fff', borderRadius: 18, padding: 14, flexDirection: 'row', alignItems: 'center', marginBottom: 12, borderWidth: 1, borderColor: '#F1F5F9' },
+  shiftCardActive: { borderColor: '#1a73e8', borderWidth: 1.5 },
+  dateBadge: { width: 52, height: 52, backgroundColor: '#F1F5F9', borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
+  dateBadgeActive: { backgroundColor: '#1a73e8' },
+  dateText: { fontSize: 18, fontWeight: '900', color: '#1E293B' },
+  monthText: { fontSize: 8, fontWeight: '900', color: '#94A3B8' },
+  shiftDetails: { flex: 1, marginLeft: 16 },
+  shiftTime: { fontSize: 15, fontWeight: '700', color: '#1E293B' },
+  shiftType: { fontSize: 11, color: '#64748B', marginTop: 3 },
+  activeDotContainer: { paddingLeft: 10 },
+  activeDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#10B981' },
+  emptyState: { alignItems: 'center', padding: 50 },
+  emptyText: { color: '#94A3B8', fontSize: 13 }
 });

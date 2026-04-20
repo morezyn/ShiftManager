@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  ActivityIndicator, 
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { auth, db } from '../config/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SignupScreen() {
   const [email, setEmail] = useState('');
@@ -15,107 +27,206 @@ export default function SignupScreen() {
 
   const handleSignup = async () => {
     if (!email || !password || !fullName || !department) {
-      alert('Please fill in all fields');
+      Alert.alert('Missing Info', 'Please fill in all fields.');
       return;
     }
-
     setLoading(true);
     try {
-      // 1. Create the user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // 2. Save additional nurse details to Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        fullName: fullName,
-        email: email,
-        department: department,
-        role: 'nurse', // Default role for this signup page
-        rfidTag: '',   // Will be linked later in Phase 2
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        fullName,
+        email,
+        department,
+        role: 'nurse',
         createdAt: new Date().toISOString(),
       });
-
-      alert('Account created successfully!');
       router.replace('/nurses/dashboard');
     } catch (error: any) {
-      alert(error.message);
+      Alert.alert('Error', error.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>Nurse Registration</Text>
-        <Text style={styles.subtitle}>Create your ShiftManager account</Text>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+      style={styles.background}
+    >
+      <View style={styles.centerContainer}>
+        {/* Floating Card */}
+        <View style={styles.card}>
+          
+          {/* Header Area */}
+          <View style={styles.cardHeader}>
+            <TouchableOpacity onPress={() => router.replace('/')} style={styles.closeBtn}>
+              <Ionicons name="close" size={22} color="#0F172A" />
+            </TouchableOpacity>
+            <Ionicons name="medical" size={24} color="#1a73e8" />
+            <View style={{ width: 32 }} />
+          </View>
 
-        <Text style={styles.label}>Full Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="e.g. Jane Doe"
-          value={fullName}
-          onChangeText={setFullName}
-        />
+          <View style={styles.cardContent}>
+            <Text style={styles.title}>Create your account</Text>
 
-        <Text style={styles.label}>Department</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="e.g. ICU, Emergency, Pediatrics"
-          value={department}
-          onChangeText={setDepartment}
-        />
+            {/* Compact Form */}
+            <View style={styles.formStack}>
+              <View style={styles.inputBox}>
+                <Text style={styles.floatingLabel}>Full Name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={fullName}
+                  onChangeText={setFullName}
+                  placeholder="e.g., Jane Doe"
+                  placeholderTextColor="#CBD5E1"
+                />
+              </View>
 
-        <Text style={styles.label}>Email Address</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="nurse@hospital.com"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
+              <View style={styles.inputBox}>
+                <Text style={styles.floatingLabel}>Department</Text>
+                <TextInput
+                  style={styles.input}
+                  value={department}
+                  onChangeText={setDepartment}
+                  placeholder="e.g., Emergency"
+                  placeholderTextColor="#CBD5E1"
+                />
+              </View>
 
-        <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="••••••••"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+              <View style={styles.inputBox}>
+                <Text style={styles.floatingLabel}>Email</Text>
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                />
+              </View>
 
-        <TouchableOpacity 
-          style={[styles.signupButton, loading && { opacity: 0.7 }]} 
-          onPress={handleSignup}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Register Account</Text>
-          )}
-        </TouchableOpacity>
+              <View style={styles.inputBox}>
+                <Text style={styles.floatingLabel}>Password</Text>
+                <TextInput
+                  style={styles.input}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
+              </View>
+            </View>
+          </View>
 
-        <TouchableOpacity onPress={() => router.replace('/')} style={styles.backLink}>
-          <Text style={styles.backLinkText}>Already have an account? <Text style={styles.loginText}>Login</Text></Text>
-        </TouchableOpacity>
+          {/* Pill Style Footer Button */}
+          <View style={styles.footer}>
+            <TouchableOpacity 
+              style={[styles.nextButton, loading && styles.disabledButton]} 
+              onPress={handleSignup}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.nextButtonText}>Next</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-    </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, backgroundColor: '#f0f2f5', justifyContent: 'center', alignItems: 'center', padding: 20 },
-  card: { backgroundColor: '#fff', padding: 40, borderRadius: 15, width: '100%', maxWidth: 450, elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 10 },
-  title: { fontSize: 28, fontWeight: '800', color: '#1a73e8', marginBottom: 5 },
-  subtitle: { fontSize: 16, color: '#5f6368', marginBottom: 25 },
-  label: { fontSize: 14, fontWeight: '600', color: '#3c4043', marginBottom: 8, marginLeft: 2 },
-  input: { height: 50, borderColor: '#dadce0', borderWidth: 1, borderRadius: 8, paddingHorizontal: 15, marginBottom: 20, fontSize: 16 },
-  signupButton: { backgroundColor: '#1a73e8', height: 55, borderRadius: 8, justifyContent: 'center', alignItems: 'center', marginTop: 10 },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  backLink: { marginTop: 25, alignItems: 'center' },
-  backLinkText: { color: '#5f6368', fontSize: 14 },
-  loginText: { color: '#1a73e8', fontWeight: 'bold' }
+  background: {
+    flex: 1,
+    backgroundColor: '#92c8fe', // Slightly darker background to make the card pop
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centerContainer: {
+    width: '90%',
+    maxWidth: 400, // Keeps it compact on tablets/web
+    height: Platform.OS === 'web' ? 'auto' : '85%',
+    maxHeight: 650,
+  },
+  card: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    overflow: 'hidden',
+    // High-end floating shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
+  },
+  closeBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardContent: {
+    flex: 1,
+    paddingHorizontal: 30,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginVertical: 15,
+  },
+  formStack: {
+    gap: 12,
+  },
+  inputBox: {
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#fff',
+  },
+  floatingLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#1a73e8', // Medical blue label
+    marginBottom: 2,
+  },
+  input: {
+    fontSize: 15,
+    color: '#0F172A',
+    fontWeight: '500',
+    padding: 0, // Keeps it tight
+  },
+  footer: {
+    padding: 30,
+    paddingBottom: 40,
+  },
+  nextButton: {
+    backgroundColor: '#0F172A', // Dark pill button like your reference
+    height: 52,
+    borderRadius: 26,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  disabledButton: {
+    opacity: 0.6,
+  },
+  nextButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
 });
