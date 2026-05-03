@@ -1,88 +1,131 @@
 # ShiftManager 👋
-**ShiftManager** is a high-performance, cross-platform attendance and scheduling solution for healthcare environments. Built with **React Native (Expo)** and **Firebase**, it bridges the gap between administrative management and frontline medical staff.
 
-## 🚀 Core Features
+**ShiftManager** is a healthcare-focused attendance and scheduling system built with **React Native + Expo** and **Firebase**. It combines role-based access for administrators and nurses with a dedicated attendance kiosk interface, making shift management simple, fast, and reliable.
 
-### 🔐 Multi-Role Authentication
-* **Admin Dashboard**: Centralized control for managing nurses, shift scheduling, and viewing hospital-wide reports.
-* **Nurse Portal**: Personalized dashboard for medical staff to view upcoming shifts and track their duty status.
+## 📌 Description
+
+ShiftManager supports hospital and care facility operations by enabling:
+
+- secure admin control for staffing, payroll, and performance reporting
+- nurse-facing scheduling, patient registration, and duty tracking
+- a kiosk-style attendance terminal for fast check-in/out workflows
+
+The app is designed for both **web** and **mobile**, so administrators can manage from desktop and nurses can access schedules from mobile devices.
+
+## 🚀 Features
+
+### 🔐 Multi-Role Access
+
+- **Admin dashboard** for managing staff, schedules, payroll, and performance
+- **Nurse portal** for viewing shifts, patient status, and personal profile details
+- Role-based routing and access control to separate administrative and clinical interfaces
 
 ### 💳 Attendance Kiosk Mode
-* A dedicated, high-visibility terminal interface designed for **RFID/Card tap simulation**.
-* Real-time "Scanner Active" feedback with a specialized UI for fast-paced hospital entries.
 
-### 📱 Full Cross-Platform Support
-* **Web**: Optimized for desktop admin management.
-* **Mobile**: Native performance for nurses on the go (iOS/Android) via Expo Go.
+- Simulated RFID/card terminal experience for quick check-in and check-out
+- High-visibility UI optimized for shared kiosk devices
+- Real-time scanner status and attendance event feedback
 
----
+### 🏥 Nurse Workflow Support
+
+- Nurse registration with role assignment
+- Patient registration and patient status tracking
+- Personalized nurse dashboard for quick shift visibility
+
+### 📊 Reporting & Management
+
+- Shift reports and attendance history for administrative review
+- Nurse performance tracking and payroll support pages
+- Hospital-wide insights from a centralized admin view
+
+### 📱 Cross-Platform Support
+
+- **Web support** for admin and kiosk workflows
+- **Mobile-ready** interfaces for nurses on iOS and Android via Expo
+- Single codebase using React Native and Expo Router
 
 ## 🛠️ Tech Stack
-* **Frontend**: React Native, Expo Router (File-based routing)
-* **Language**: TypeScript
-* **Backend**: Firebase (Authentication & Firestore)
-* **Styling**: Adaptive StyleSheet with high-contrast Kiosk Mode
 
----
+- Frontend: **React Native** with **Expo Router**
+- Language: **TypeScript**
+- Backend: **Firebase Authentication** and **Firestore**
+- Styling: responsive React Native styles with high-contrast kiosk mode
 
 ## 📁 Project Structure
+
 ```text
 ShiftManager/
 ├── app/
-│   ├── admin/           # Administrative controls & reports
-│   ├── nurses/          # Nurse-specific dashboards
-│   ├── attendance.tsx   # RFID Kiosk Terminal
-│   ├── signup.tsx       # Nurse registration with role assignment
-│   └── index.tsx        # Unified role-based login gate
+│   ├── admin/           # Admin dashboards and reports
+│   ├── nurses/          # Nurse dashboards and patient management
+│   ├── attendance.tsx   # Attendance kiosk interface
+│   ├── signup.tsx       # User signup and role selection
+│   └── index.tsx        # Login / role landing page
 ├── config/
-│   └── firebase.ts      # Database & Auth configuration
-└── utils/               # Shift and grade export helpers
+│   └── firebase.ts      # Firebase initialization and config
+├── assets/              # Images and static assets
+└── types/               # Shared TypeScript definitions
 ```
 
----
+## ⚙️ Benefits
 
-## 🚦 Getting Started
+- Reduces manual attendance paperwork and improves shift accuracy
+- Enables fast nurse check-in with a kiosk-style terminal
+- Helps managers track staffing, payroll, and nurse performance in one place
+- Supports both desktop administration and mobile nurse workflows
+- Built on scalable Firebase services for rapid deployment
 
-### 1. Installation
+## 🧩 Installation
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/your-org/ShiftManager.git
+cd ShiftManager
+```
+
+2. Install dependencies
+
 ```bash
 npm install
 ```
 
-### 2. Configure Firebase
-Create a `config/firebase.ts` file and add your web configuration:
+3. Configure Firebase
+   Create `config/firebase.ts` with your Firebase web app settings:
+
 ```typescript
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
   projectId: "YOUR_PROJECT_ID",
-  // ... rest of config
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID",
 };
+
+export default firebaseConfig;
 ```
 
-### 3. Run the Project
+4. Start the app
+
 ```bash
-# Start Expo
 npx expo start
-
-# Choose your platform:
-# Press 'w' for Web
-# Press 'a' for Android
-# Press 'i' for iOS
 ```
 
----
+5. Open on the target platform
 
-## 🧪 Testing Credentials
-* **Admin Email**: `admin@gmail.com`
-* **Password**: `password`
-* **Nurse Login**: Create a new account via the **Sign Up** link on the login page.
+- Press `w` for web
+- Press `a` for Android
+- Press `i` for iOS
 
----
+## 🧪 Demo Credentials
 
-### Key Improvements Made:
-1.  **Project Context**: It no longer looks like an Expo starter template; it looks like a specific "Healthcare IT" tool.
-2.  **Clearer Hierarchy**: Used distinct sections for Features, Tech Stack, and Structure.
-3.  **Setup Guide**: Added a placeholder for Firebase configuration so other developers know what's needed to make it run.
-4.  **Credential Transparency**: Clearly marked how to test the Admin vs. Nurse roles.
+- **Admin Email**: `admin@gmail.com`
+- **Password**: `password`
+- **Nurse**: Use the Sign Up page to create a nurse account
 
-**Pro-Tip:** Once you push this to GitHub, take a screenshot of your **Kiosk Mode** and **Dashboard** and put them in a `screenshots/` folder. Adding those images to the README makes a huge difference in "First Impressions"!
+## 📌 Notes
+
+- Make sure Firebase Authentication and Firestore are enabled in your Firebase project.
+- Update the Firebase rules and collections as needed for production use.
+- Add screenshots or app previews to this README for a stronger presentation.

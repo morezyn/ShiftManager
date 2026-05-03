@@ -38,7 +38,6 @@ export default function AttendanceKiosk() {
   const [latestNurse, setLatestNurse] = useState<string | null>(null);
   const inputRef = useRef<TextInput>(null);
 
-  // 1. Automatically focus the RFID input every second
   useEffect(() => {
     const focusInterval = setInterval(() => {
       inputRef.current?.focus();
@@ -46,9 +45,7 @@ export default function AttendanceKiosk() {
     return () => clearInterval(focusInterval);
   }, []);
 
-  // 2. Real-time listener for the Right-Side list
   useEffect(() => {
-    // Increased limit to 20 to ensure previous logs are visible
     const q = query(
       collection(db, "attendance_logs"),
       orderBy("timestamp", "desc"),
@@ -80,7 +77,6 @@ export default function AttendanceKiosk() {
     if (!scannedTag) return;
 
     try {
-      // Step A: Find the nurse with this RFID tag
       const nurseQuery = query(
         collection(db, "users"),
         where("rfidTag", "==", scannedTag),
@@ -97,7 +93,6 @@ export default function AttendanceKiosk() {
       const nurseId = nurseDoc.id;
       const { fullName } = nurseDoc.data();
 
-      // Step B: Check for an existing "Time In" session
       const activeSessionQuery = query(
         collection(db, "attendance"),
         where("nurseId", "==", nurseId),
@@ -108,7 +103,6 @@ export default function AttendanceKiosk() {
       let currentAction: "Time In" | "Time Out" = "Time In";
 
       if (sessionSnap.empty) {
-        // Log new attendance session
         await addDoc(collection(db, "attendance"), {
           nurseId,
           nurseName: fullName,
@@ -117,7 +111,6 @@ export default function AttendanceKiosk() {
           date: new Date().toISOString().split("T")[0],
         });
       } else {
-        // Complete the existing session
         const sessionDocId = sessionSnap.docs[0].id;
         await updateDoc(doc(db, "attendance", sessionDocId), {
           checkOut: serverTimestamp(),
@@ -125,7 +118,6 @@ export default function AttendanceKiosk() {
         currentAction = "Time Out";
       }
 
-      // Step C: Push to the visual log collection (This powers the list on the right)
       await addDoc(collection(db, "attendance_logs"), {
         nurseName: fullName,
         type: currentAction,
@@ -142,12 +134,10 @@ export default function AttendanceKiosk() {
 
   return (
     <View style={styles.container}>
-      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Text style={styles.backText}>← Exit Kiosk</Text>
       </TouchableOpacity>
 
-      {/* Left Panel: Scanner Interface */}
       <View style={styles.leftPanel}>
         <Text style={styles.kioskTitle}>ShiftManager Kiosk</Text>
         <Text style={styles.instruction}>Tap your card to log Attendance</Text>
@@ -174,7 +164,6 @@ export default function AttendanceKiosk() {
         />
       </View>
 
-      {/* Right Panel: Live Activity Feed */}
       <View style={styles.rightPanel}>
         <Text style={styles.listTitle}>Recent Activity</Text>
         <FlatList
@@ -221,93 +210,23 @@ export default function AttendanceKiosk() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, flexDirection: "row", backgroundColor: "#92c8fe" },
-
-  backButton: {
-    position: "absolute",
-    top: 40,
-    left: 40,
-    zIndex: 10,
-    padding: 12,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 8,
-  },
+  backButton: { position: "absolute", top: 40, left: 40, zIndex: 10, padding: 12, backgroundColor: "rgba(255,255,255,0.2)", borderRadius: 8 },
   backText: { color: "#fff", fontWeight: "bold" },
-
-  leftPanel: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 40,
-  },
-  kioskTitle: {
-    color: "#fff",
-    fontSize: 36,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  instruction: {
-    color: "rgba(255,255,255,0.8)",
-    fontSize: 18,
-    marginBottom: 40,
-  },
-
-  statusCircle: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: "rgba(251, 251, 255, 0.15)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-<<<<<<< HEAD
-  statusEmoji: {
-    fontSize: 100,
-    textAlign: "center",
-    top: -25,
-    includeFontPadding: false, // Ensures vertical centering on Android
-  },
-=======
-  statusEmoji: { fontSize: 64 },
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
-
+  leftPanel: { flex: 1, justifyContent: "center", alignItems: "center", padding: 40 },
+  kioskTitle: { color: "#fff", fontSize: 36, fontWeight: "bold", marginBottom: 8 },
+  instruction: { color: "rgba(255,255,255,0.8)", fontSize: 18, marginBottom: 40 },
+  statusCircle: { width: 160, height: 160, borderRadius: 80, backgroundColor: "rgba(251, 251, 255, 0.15)", justifyContent: "center", alignItems: "center", marginBottom: 20 },
+  statusEmoji: { fontSize: 100, textAlign: "center", top: -25, includeFontPadding: false },
   welcomeBox: { alignItems: "center" },
   welcomeText: { color: "#fff", fontSize: 26, fontWeight: "bold" },
   timestampSub: { color: "rgba(255,255,255,0.7)", marginTop: 5 },
-
   hiddenInput: { opacity: 0, position: "absolute" },
-
-  rightPanel: {
-    width: 420,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 40,
-    borderBottomLeftRadius: 40,
-    padding: 35,
-    elevation: 20,
-  },
-  listTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#202124",
-    marginBottom: 25,
-  },
-  logCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 18,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f1f3f4",
-  },
+  rightPanel: { width: 420, backgroundColor: "#fff", borderTopLeftRadius: 40, borderBottomLeftRadius: 40, padding: 35, elevation: 20 },
+  listTitle: { fontSize: 24, fontWeight: "bold", color: "#202124", marginBottom: 25 },
+  logCard: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: "#f1f3f4" },
   logName: { fontSize: 17, fontWeight: "600", color: "#202124" },
   logTime: { fontSize: 14, color: "#5f6368", marginTop: 3 },
-
   typeBadge: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 10 },
   typeText: { fontSize: 12, fontWeight: "bold", textTransform: "uppercase" },
-  emptyText: {
-    textAlign: "center",
-    color: "#9aa0a6",
-    marginTop: 40,
-    fontSize: 16,
-  },
+  emptyText: { textAlign: "center", color: "#9aa0a6", marginTop: 40, fontSize: 16 },
 });

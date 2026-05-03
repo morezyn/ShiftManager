@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { 
   View, 
   Text, 
@@ -13,9 +12,6 @@ import {
   ActivityIndicator,
   StatusBar
 } from 'react-native';
-=======
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
 import { useRouter } from 'expo-router';
 import { auth, db } from '../../config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -80,47 +76,22 @@ export default function NurseProfile() {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
-<<<<<<< HEAD
       <StatusBar barStyle="dark-content" />
       
-      {/* "NON-EXISTENT" TRANSPARENT HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={22} color="#0F172A" />
         </TouchableOpacity>
-        
         <Text style={styles.headerTitle}>Account Settings</Text>
-        
         <TouchableOpacity onPress={handleUpdateProfile} disabled={updating} style={styles.saveActionBtn}>
-=======
-      {/* Tight Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={20} color="#1E293B" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Nurse Account</Text>
-        <TouchableOpacity onPress={handleUpdateProfile} disabled={updating}>
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
-          {updating ? (
-            <ActivityIndicator size="small" color="#1a73e8" />
-          ) : (
-            <Text style={styles.doneBtn}>Save</Text>
-          )}
+          {updating ? <ActivityIndicator size="small" color="#1a73e8" /> : <Text style={styles.doneBtn}>Save</Text>}
         </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        
-<<<<<<< HEAD
-        {/* Profile Identity Section */}
         <View style={styles.profileHeader}>
-          <View style={styles.avatarWrapper}>
-            <View style={styles.miniAvatar}>
-              <Text style={styles.avatarLetter}>{userData.fullName.charAt(0)}</Text>
-            </View>
-            <TouchableOpacity style={styles.editAvatarBadge}>
-              <Ionicons name="camera" size={14} color="#fff" />
-            </TouchableOpacity>
+          <View style={styles.miniAvatar}>
+            <Text style={styles.avatarLetter}>{userData.fullName.charAt(0)}</Text>
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>{userData.fullName}</Text>
@@ -128,7 +99,6 @@ export default function NurseProfile() {
           </View>
         </View>
 
-        {/* Info Grid */}
         <View style={styles.compactStats}>
           <View style={styles.statBox}>
             <Text style={styles.statLabel}>Unit</Text>
@@ -144,41 +114,7 @@ export default function NurseProfile() {
           </View>
         </View>
 
-        {/* Input Groups */}
-        <Text style={styles.sectionTitle}>Profile Information</Text>
-=======
-        {/* Compact Profile Header */}
-        <View style={styles.profileHeader}>
-          <View style={styles.miniAvatar}>
-            <Text style={styles.avatarLetter}>{userData.fullName.charAt(0)}</Text>
-          </View>
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{userData.fullName}</Text>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{userData.department} UNIT</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Compact Stats Grid */}
-        <View style={styles.compactStats}>
-          <View style={styles.statBox}>
-            <Text style={styles.statLabel}>Role</Text>
-            <Text style={styles.statValue}>Nurse</Text>
-          </View>
-          <View style={[styles.statBox, { borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#F1F5F9' }]}>
-            <Text style={styles.statLabel}>Access</Text>
-            <Text style={styles.statValue}>Common</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statLabel}>RFID</Text>
-            <Text style={[styles.statValue, { fontSize: 11 }]}>{userData.rfidTag.substring(0, 6)}</Text>
-          </View>
-        </View>
-
-        {/* Personal Details Card */}
         <Text style={styles.sectionTitle}>Personal Details</Text>
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
         <View style={styles.card}>
           <View style={styles.inputRow}>
             <Text style={styles.inputLabel}>Full Name</Text>
@@ -186,29 +122,13 @@ export default function NurseProfile() {
               style={styles.inlineInput}
               value={userData.fullName}
               onChangeText={(t) => setUserData({...userData, fullName: t})}
-<<<<<<< HEAD
-              placeholder="Enter name"
             />
           </View>
           <View style={styles.divider} />
-=======
-            />
-          </View>
-          <View style={[styles.inputRow, { borderTopWidth: 1, borderTopColor: '#F8FAFC' }]}>
+          <View style={styles.inputRow}>
             <Text style={styles.inputLabel}>Email</Text>
             <Text style={styles.readOnlyText}>{userData.email}</Text>
           </View>
-        </View>
-
-        {/* Work Credentials Card */}
-        <Text style={styles.sectionTitle}>System Credentials</Text>
-        <View style={styles.card}>
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>Department</Text>
-            <Text style={styles.readOnlyText}>{userData.department}</Text>
-          </View>
-<<<<<<< HEAD
         </View>
 
         <Text style={styles.sectionTitle}>System Access</Text>
@@ -220,42 +140,8 @@ export default function NurseProfile() {
           <View style={styles.divider} />
           <View style={styles.inputRow}>
             <Text style={styles.inputLabel}>System UID</Text>
-=======
-          <View style={[styles.inputRow, { borderTopWidth: 1, borderTopColor: '#F8FAFC' }]}>
-            <Text style={styles.inputLabel}>RFID ID</Text>
-            <Text style={styles.readOnlyText}>{userData.rfidTag}</Text>
-          </View>
-          <View style={[styles.inputRow, { borderTopWidth: 1, borderTopColor: '#F8FAFC' }]}>
-            <Text style={styles.inputLabel}>UID</Text>
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
             <Text style={[styles.readOnlyText, { fontSize: 10 }]}>{userData.uid}</Text>
           </View>
-        </View>
-
-<<<<<<< HEAD
-        <Text style={styles.sectionTitle}>Preferences & Security</Text>
-        <View style={styles.card}>
-          <TouchableOpacity style={styles.actionRow} onPress={() => Alert.alert("Password", "Reset link sent.")}>
-            <View style={[styles.iconBox, { backgroundColor: '#F0F9FF' }]}><Ionicons name="key" size={18} color="#0EA5E9" /></View>
-            <Text style={styles.actionText}>Change Password</Text>
-            <Ionicons name="chevron-forward" size={16} color="#CBD5E1" />
-          </TouchableOpacity>
-          <View style={styles.divider} />
-          <TouchableOpacity style={styles.actionRow}>
-            <View style={[styles.iconBox, { backgroundColor: '#FDF2F8' }]}><Ionicons name="notifications" size={18} color="#DB2777" /></View>
-            <Text style={styles.actionText}>Notifications</Text>
-            <Ionicons name="chevron-forward" size={16} color="#CBD5E1" />
-          </TouchableOpacity>
-=======
-        {/* Security Section */}
-        <Text style={styles.sectionTitle}>Security</Text>
-        <View style={styles.card}>
-          <TouchableOpacity style={styles.actionRow} onPress={() => Alert.alert("Password", "Password reset link sent to email.")}>
-            <View style={styles.iconBox}><Ionicons name="key-outline" size={18} color="#64748B" /></View>
-            <Text style={styles.actionText}>Change Password</Text>
-            <Ionicons name="chevron-forward" size={16} color="#CBD5E1" />
-          </TouchableOpacity>
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
         </View>
 
         <TouchableOpacity 
@@ -265,13 +151,8 @@ export default function NurseProfile() {
             router.replace('/');
           }}
         >
-<<<<<<< HEAD
           <Text style={styles.logoutText}>Sign Out</Text>
-=======
-          <Text style={styles.logoutText}>Log Out Account</Text>
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
         </TouchableOpacity>
-
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -280,154 +161,29 @@ export default function NurseProfile() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F8FAFC' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-<<<<<<< HEAD
   scrollContent: { padding: 20 },
-  
-  header: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'space-between', 
-    paddingTop: Platform.OS === 'ios' ? 60 : 40, 
-    paddingHorizontal: 20, 
-    paddingBottom: 10, 
-    backgroundColor: '#F8FAFC', // Same as container to "vanish"
-  },
-  backBtn: { 
-    width: 40, 
-    height: 40, 
-    borderRadius: 14, 
-    backgroundColor: '#fff', 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#F1F5F9'
-  },
-  headerTitle: { 
-    fontSize: 16, 
-    fontWeight: '800', 
-    color: '#0F172A',
-    letterSpacing: -0.3
-  },
-  saveActionBtn: {
-    width: 40,
-    alignItems: 'flex-end'
-  },
-  doneBtn: { 
-    color: '#1a73e8', 
-    fontWeight: '800', 
-    fontSize: 14 
-  },
-
-  // Profile Header
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: Platform.OS === 'ios' ? 60 : 40, paddingHorizontal: 20, paddingBottom: 10, backgroundColor: '#F8FAFC' },
+  backBtn: { width: 40, height: 40, borderRadius: 14, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#F1F5F9' },
+  headerTitle: { fontSize: 16, fontWeight: '800', color: '#0F172A' },
+  saveActionBtn: { width: 40, alignItems: 'flex-end' },
+  doneBtn: { color: '#1a73e8', fontWeight: '800', fontSize: 14 },
   profileHeader: { alignItems: 'center', marginBottom: 30, marginTop: 10 },
-  avatarWrapper: { position: 'relative' },
-  miniAvatar: { 
-    width: 80, 
-    height: 80, 
-    borderRadius: 28, 
-    backgroundColor: '#0F172A', 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 4
-  },
+  miniAvatar: { width: 80, height: 80, borderRadius: 28, backgroundColor: '#0F172A', justifyContent: 'center', alignItems: 'center' },
   avatarLetter: { fontSize: 32, fontWeight: '900', color: '#fff' },
-  editAvatarBadge: {
-    position: 'absolute',
-    bottom: -4,
-    right: -4,
-    backgroundColor: '#1a73e8',
-    width: 28,
-    height: 28,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#F8FAFC'
-  },
   profileInfo: { alignItems: 'center', marginTop: 15 },
   profileName: { fontSize: 20, fontWeight: '900', color: '#0F172A' },
   profileEmail: { fontSize: 13, color: '#64748B', fontWeight: '500', marginTop: 2 },
-
-  // Stats Grid
-  compactStats: { 
-    flexDirection: 'row', 
-    backgroundColor: '#fff', 
-    borderRadius: 20, 
-    paddingVertical: 15, 
-    marginBottom: 30, 
-    borderWidth: 1, 
-    borderColor: '#F1F5F9',
-    shadowColor: '#0F172A',
-    shadowOpacity: 0.03,
-    shadowRadius: 10
-  },
+  compactStats: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 20, paddingVertical: 15, marginBottom: 30, borderWidth: 1, borderColor: '#F1F5F9' },
   statBox: { flex: 1, alignItems: 'center' },
-  statLabel: { fontSize: 10, fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 },
+  statLabel: { fontSize: 10, fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase' },
   statValue: { fontSize: 14, fontWeight: '700', color: '#334155', marginTop: 4 },
-
-  // Form & Cards
   sectionTitle: { fontSize: 12, fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase', marginBottom: 10, marginLeft: 4 },
   card: { backgroundColor: '#fff', borderRadius: 20, borderWidth: 1, borderColor: '#F1F5F9', marginBottom: 25 },
   divider: { height: 1, backgroundColor: '#F8FAFC', marginHorizontal: 16 },
   inputRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 18 },
-=======
-  scrollContent: { padding: 16 },
-  
-  header: { 
-    backgroundColor: '#fff', 
-    paddingTop: 50, 
-    paddingHorizontal: 20, 
-    paddingBottom: 15, 
-    flexDirection: 'row', 
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9'
-  },
-  backBtn: { width: 32, height: 32, backgroundColor: '#F8FAFC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
-  headerTitle: { fontSize: 15, fontWeight: '800', color: '#0F172A' },
-  doneBtn: { color: '#1a73e8', fontWeight: '800', fontSize: 15 },
-
-  // Profile Header
-  profileHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 20, marginTop: 5 },
-  miniAvatar: { width: 60, height: 60, borderRadius: 20, backgroundColor: '#0F172A', justifyContent: 'center', alignItems: 'center' },
-  avatarLetter: { fontSize: 24, fontWeight: '900', color: '#fff' },
-  profileInfo: { marginLeft: 15 },
-  profileName: { fontSize: 18, fontWeight: '800', color: '#0F172A' },
-  badge: { backgroundColor: '#EFF6FF', alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, marginTop: 4 },
-  badgeText: { color: '#1a73e8', fontWeight: '800', fontSize: 10, textTransform: 'uppercase' },
-
-  // Stats Grid
-  compactStats: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 16, paddingVertical: 12, marginBottom: 20, borderWidth: 1, borderColor: '#F1F5F9' },
-  statBox: { flex: 1, alignItems: 'center' },
-  statLabel: { fontSize: 9, fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase' },
-  statValue: { fontSize: 13, fontWeight: '700', color: '#334155', marginTop: 2 },
-
-  // Form & Cards
-  sectionTitle: { fontSize: 11, fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase', marginBottom: 8, marginLeft: 4, letterSpacing: 0.5 },
-  card: { backgroundColor: '#fff', borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: '#F1F5F9', marginBottom: 20 },
-  inputRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 14 },
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   inputLabel: { fontSize: 14, fontWeight: '600', color: '#64748B' },
   inlineInput: { flex: 1, textAlign: 'right', fontSize: 14, fontWeight: '700', color: '#0F172A' },
   readOnlyText: { fontSize: 14, fontWeight: '600', color: '#94A3B8' },
-
-<<<<<<< HEAD
-  actionRow: { flexDirection: 'row', alignItems: 'center', padding: 16 },
-  iconBox: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginRight: 15 },
-  actionText: { flex: 1, fontSize: 15, fontWeight: '600', color: '#334155' },
-
   logoutBtn: { marginTop: 10, padding: 20, alignItems: 'center', backgroundColor: '#fff', borderRadius: 20, borderWidth: 1, borderColor: '#FEE2E2', marginBottom: 40 },
   logoutText: { color: '#EF4444', fontWeight: '800', fontSize: 15 }
-=======
-  actionRow: { flexDirection: 'row', alignItems: 'center', padding: 14 },
-  iconBox: { width: 30, height: 30, backgroundColor: '#F8FAFC', borderRadius: 8, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  actionText: { flex: 1, fontSize: 14, fontWeight: '600', color: '#334155' },
-
-  logoutBtn: { marginTop: 10, padding: 16, alignItems: 'center' },
-  logoutText: { color: '#EF4444', fontWeight: '700', fontSize: 14 }
->>>>>>> 77244535c225289db5386e3d02e7e3733474121d
 });
