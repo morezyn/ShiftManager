@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { 
   View, 
   Text, 
@@ -11,11 +12,15 @@ import {
   Dimensions,
   Platform
 } from 'react-native';
+=======
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
 import { useRouter, usePathname } from 'expo-router';
 import { auth, db } from '../../config/firebase';
 import { collection, query, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { Ionicons } from '@expo/vector-icons';
+<<<<<<< HEAD
 import { LineChart } from "react-native-chart-kit";
 
 // Updated Imports
@@ -46,6 +51,8 @@ if (Platform.OS === 'web') {
     originalError(...args);
   };
 }
+=======
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
 
 interface AttendanceRecord {
   id: string;
@@ -55,16 +62,20 @@ interface AttendanceRecord {
   date: string;
 }
 
+<<<<<<< HEAD
 const { width: screenWidth } = Dimensions.get("window");
 const SIDEBAR_WIDTH = 220;
 const CHART_WIDTH = screenWidth > SIDEBAR_WIDTH ? screenWidth - SIDEBAR_WIDTH - 100 : 400;
 
+=======
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
 export default function Reports() {
   const router = useRouter();
   const pathname = usePathname();
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
+<<<<<<< HEAD
 const handleExportExcel = async () => {
     try {
       // 1. Prepare Data
@@ -130,6 +141,8 @@ const handleExportExcel = async () => {
     }
   };
 
+=======
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   useEffect(() => {
     const q = query(collection(db, "attendance"), orderBy("checkIn", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -143,6 +156,7 @@ const handleExportExcel = async () => {
     return () => unsubscribe();
   }, []);
 
+<<<<<<< HEAD
   const getWeeklyData = () => {
     const dayCounts: { [key: string]: number } = {
       "Mon": 0, "Tue": 0, "Wed": 0, "Thu": 0, "Fri": 0, "Sat": 0, "Sun": 0
@@ -157,6 +171,8 @@ const handleExportExcel = async () => {
     return Object.values(dayCounts);
   };
 
+=======
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -173,17 +189,29 @@ const handleExportExcel = async () => {
 
   return (
     <View style={styles.container}>
+<<<<<<< HEAD
       <View style={styles.sidebar}>
         <View>
           <View style={styles.logoContainer}>
             <View style={styles.logoIcon}><Ionicons name="shield-checkmark" size={18} color="#fff" /></View>
+=======
+      {/* SIDEBAR - Unified with Dashboard/Nurses */}
+      <View style={styles.sidebar}>
+        <View>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoIcon}><Ionicons name="shield-checkmark" size={20} color="#fff" /></View>
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
             <Text style={styles.logoText}>ShiftManager</Text>
           </View>
           
           <NavItem icon="grid" label="Dashboard" active={pathname === '/admin/dashboard'} onPress={() => router.push('/admin/dashboard')} />
           <NavItem icon="people" label="Nurses" active={pathname === '/admin/manageNurse'} onPress={() => router.push('/admin/manageNurse')} />
           <NavItem icon="calendar" label="Schedules" active={pathname === '/admin/schedule'} onPress={() => router.push('/admin/schedule')} />
+<<<<<<< HEAD
           <NavItem icon="bar-chart" label="Reports" active={true} />
+=======
+          <NavItem icon="bar-chart" label="Reports" active={pathname === '/admin/reports'} onPress={() => router.push('/admin/reports')} />
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
         </View>
 
         <TouchableOpacity style={styles.logoutBtn} onPress={handleSignOut}>
@@ -192,6 +220,7 @@ const handleExportExcel = async () => {
         </TouchableOpacity>
       </View>
 
+<<<<<<< HEAD
       <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
         <View style={styles.headerRow}>
           <View>
@@ -272,6 +301,49 @@ const handleExportExcel = async () => {
             </TouchableOpacity>
           </View>
 
+=======
+      {/* MAIN CONTENT */}
+      <View style={styles.mainContent}>
+        {/* HEADER ROW - Unified with Profile Box */}
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.headerTitle}>Attendance Reports</Text>
+            <Text style={styles.headerSubtitle}>Detailed logs of personnel activity</Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <TouchableOpacity style={styles.exportBtn} onPress={() => Alert.alert("Export", "CSV generated.")}>
+              <Ionicons name="download-outline" size={18} color="#fff" />
+              <Text style={styles.exportBtnText}>Export CSV</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push('/admin/profile')} style={styles.profileBox}>
+              <View style={styles.profileTextWrap}>
+                <Text style={styles.adminName}>Administrator</Text>
+                <Text style={styles.adminRole}>Super User</Text>
+              </View>
+              <View style={styles.profileCircle}><Text style={styles.profileInitial}>A</Text></View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* SUMMARY STRIP */}
+        <View style={styles.summaryStrip}>
+          <View style={styles.summaryItem}>
+            <Text style={styles.summaryVal}>{records.length}</Text>
+            <Text style={styles.summaryLab}>Total Logs</Text>
+          </View>
+          <View style={[styles.summaryItem, { borderLeftWidth: 1, borderColor: '#F1F5F9' }]}>
+            <Text style={[styles.summaryVal, { color: '#10B981' }]}>
+              {records.filter(r => !r.checkOut).length}
+            </Text>
+            <Text style={styles.summaryLab}>Active Now</Text>
+          </View>
+        </View>
+
+        {/* TABLE BODY */}
+        <View style={styles.tableBody}>
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
           <View style={styles.tableHeader}>
             <Text style={[styles.colLabel, { flex: 2 }]}>Nurse / Date</Text>
             <Text style={[styles.colLabel, { flex: 1 }]}>Check In</Text>
@@ -284,8 +356,13 @@ const handleExportExcel = async () => {
           ) : (
             <FlatList
               data={records}
+<<<<<<< HEAD
               scrollEnabled={false}
               keyExtractor={(item) => item.id}
+=======
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
               renderItem={({ item }) => (
                 <View style={styles.row}>
                   <View style={{ flex: 2 }}>
@@ -298,7 +375,11 @@ const handleExportExcel = async () => {
                     <View style={[styles.statusBadge, { backgroundColor: item.checkOut ? '#F1F5F9' : '#DCFCE7' }]}>
                       <View style={[styles.dot, { backgroundColor: item.checkOut ? '#94A3B8' : '#10B981' }]} />
                       <Text style={[styles.statusText, { color: item.checkOut ? '#64748B' : '#16A34A' }]}>
+<<<<<<< HEAD
                         {item.checkOut ? 'Done' : 'Active'}
+=======
+                        {item.checkOut ? 'Completed' : 'Active'}
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
                       </Text>
                     </View>
                   </View>
@@ -307,7 +388,11 @@ const handleExportExcel = async () => {
             />
           )}
         </View>
+<<<<<<< HEAD
       </ScrollView>
+=======
+      </View>
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
     </View>
   );
 }
@@ -319,6 +404,7 @@ const NavItem = ({ icon, label, active, onPress }: any) => (
   </TouchableOpacity>
 );
 
+<<<<<<< HEAD
 const chartConfig = {
   backgroundGradientFrom: "#fff",
   backgroundGradientTo: "#fff",
@@ -331,6 +417,12 @@ const chartConfig = {
 
 const styles = StyleSheet.create({
   container: { flex: 1, flexDirection: 'row', backgroundColor: '#F8FAFC' },
+=======
+const styles = StyleSheet.create({
+  container: { flex: 1, flexDirection: 'row', backgroundColor: '#F8FAFC' },
+  
+  // Sidebar (Unified)
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   sidebar: { width: 220, backgroundColor: '#fff', padding: 20, borderRightWidth: 1, borderRightColor: '#E2E8F0', justifyContent: 'space-between' },
   logoContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 30, gap: 8 },
   logoIcon: { backgroundColor: '#1a73e8', width: 30, height: 30, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
@@ -341,16 +433,30 @@ const styles = StyleSheet.create({
   navLabelActive: { color: '#1a73e8', fontWeight: '800' },
   logoutBtn: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10 },
   logoutText: { color: '#EF4444', fontWeight: '700', fontSize: 13 },
+<<<<<<< HEAD
   mainContent: { flex: 1, padding: 32 },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 25 },
   headerTitle: { fontSize: 26, fontWeight: '900', color: '#0F172A' },
   headerSubtitle: { color: '#94A3B8', fontSize: 14, fontWeight: '600' },
+=======
+
+  // Main Content
+  mainContent: { flex: 1, padding: 32 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
+  headerTitle: { fontSize: 26, fontWeight: '900', color: '#0F172A' },
+  headerSubtitle: { color: '#94A3B8', fontSize: 14, fontWeight: '600' },
+  
+  exportBtn: { backgroundColor: '#1e293b', flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 16, borderRadius: 12, gap: 8 },
+  exportBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
+
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   profileBox: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   profileTextWrap: { alignItems: 'flex-end' },
   adminName: { fontSize: 14, fontWeight: '800', color: '#1E293B' },
   adminRole: { fontSize: 11, fontWeight: '600', color: '#94A3B8' },
   profileCircle: { width: 40, height: 40, borderRadius: 14, backgroundColor: '#0F172A', justifyContent: 'center', alignItems: 'center' },
   profileInitial: { color: '#fff', fontWeight: '800', fontSize: 14 },
+<<<<<<< HEAD
   trendsCard: { 
     backgroundColor: '#fff', 
     padding: 24, 
@@ -376,12 +482,27 @@ const styles = StyleSheet.create({
   tableTopHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 },
   exportBtn: { backgroundColor: '#1e293b', flexDirection: 'row', alignItems: 'center', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 10, gap: 8 },
   exportBtnText: { color: '#fff', fontWeight: '700', fontSize: 12 },
+=======
+
+  // Summary Strip
+  summaryStrip: { flexDirection: 'row', backgroundColor: '#fff', borderRadius: 20, padding: 20, marginBottom: 30, borderWidth: 1, borderColor: '#F1F5F9' },
+  summaryItem: { flex: 1, paddingLeft: 24 },
+  summaryVal: { fontSize: 24, fontWeight: '900', color: '#0F172A' },
+  summaryLab: { fontSize: 11, fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 },
+
+  // Table Styling
+  tableBody: { flex: 1, backgroundColor: '#fff', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: '#F1F5F9' },
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   tableHeader: { flexDirection: 'row', paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
   colLabel: { fontSize: 11, fontWeight: '800', color: '#CBD5E1', textTransform: 'uppercase', letterSpacing: 0.5 },
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
   nurseText: { fontSize: 15, fontWeight: '700', color: '#1E293B' },
   dateText: { fontSize: 12, color: '#94A3B8', fontWeight: '600', marginTop: 2 },
   timeText: { fontSize: 14, fontWeight: '600', color: '#475569' },
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   statusText: { fontSize: 11, fontWeight: '800' },
   dot: { width: 6, height: 6, borderRadius: 3 }

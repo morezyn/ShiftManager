@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { 
   View, 
   Text, 
@@ -23,6 +24,12 @@ import {
   updateDoc, 
   deleteDoc 
 } from 'firebase/firestore';
+=======
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Modal, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { useRouter, usePathname } from 'expo-router';
+import { auth, db } from '../../config/firebase';
+import { collection, query, where, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 
@@ -32,6 +39,7 @@ interface Nurse {
   email: string;
   department: string;
   rfidTag: string;
+<<<<<<< HEAD
   assignedPatientId?: string;
   assignedPatientName?: string;
 }
@@ -40,11 +48,14 @@ interface Patient {
   id: string;
   name: string; // Mapped to 'name' in your Firestore data
   condition: string;
+=======
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
 }
 
 export default function ManageNurses() {
   const router = useRouter();
   const pathname = usePathname();
+<<<<<<< HEAD
   
   // Data States
   const [nurses, setNurses] = useState<Nurse[]>([]);
@@ -83,6 +94,25 @@ export default function ManageNurses() {
       unsubNurses();
       unsubPatients();
     };
+=======
+  const [nurses, setNurses] = useState<Nurse[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [selectedNurse, setSelectedNurse] = useState<Nurse | null>(null);
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
+
+  useEffect(() => {
+    const q = query(collection(db, "users"), where("role", "==", "nurse"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const nurseList = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Nurse[];
+      setNurses(nurseList);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   }, []);
 
   const filteredNurses = nurses.filter(n => 
@@ -90,10 +120,13 @@ export default function ManageNurses() {
     n.department.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+<<<<<<< HEAD
   const filteredPatients = patients.filter(p => 
     p.name.toLowerCase().includes(patientSearch.toLowerCase())
   );
 
+=======
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   const handleUpdate = async () => {
     if (selectedNurse) {
       try {
@@ -101,6 +134,7 @@ export default function ManageNurses() {
         await updateDoc(nurseRef, {
           fullName: selectedNurse.fullName,
           department: selectedNurse.department,
+<<<<<<< HEAD
           rfidTag: selectedNurse.rfidTag,
           assignedPatientId: selectedNurse.assignedPatientId || null,
           assignedPatientName: selectedNurse.assignedPatientName || null,
@@ -110,6 +144,14 @@ export default function ManageNurses() {
         Alert.alert("Success", "Nurse profile and assignment updated.");
       } catch (error) {
         Alert.alert("Error", "Failed to update record.");
+=======
+          rfidTag: selectedNurse.rfidTag
+        });
+        setEditModalVisible(false);
+        Alert.alert("Success", "Profile updated.");
+      } catch (error) {
+        Alert.alert("Error", "Update failed.");
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
       }
     }
   };
@@ -121,22 +163,43 @@ export default function ManageNurses() {
     ]);
   };
 
+<<<<<<< HEAD
   return (
     <View style={styles.container}>
       {/* SIDEBAR */}
+=======
+  const handleLogout = async () => {
+    try { 
+      await auth.signOut(); 
+      router.replace('/'); 
+    } catch (error) { console.error(error); }
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* SIDEBAR - Unified */}
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
       <View style={styles.sidebar}>
         <View>
           <View style={styles.logoContainer}>
             <View style={styles.logoIcon}><Ionicons name="shield-checkmark" size={20} color="#fff" /></View>
             <Text style={styles.logoText}>ShiftManager</Text>
           </View>
+<<<<<<< HEAD
+=======
+          
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
           <NavItem icon="grid" label="Dashboard" active={pathname === '/admin/dashboard'} onPress={() => router.push('/admin/dashboard')} />
           <NavItem icon="people" label="Nurses" active={pathname === '/admin/manageNurse'} onPress={() => router.push('/admin/manageNurse')} />
           <NavItem icon="calendar" label="Schedules" active={pathname === '/admin/schedule'} onPress={() => router.push('/admin/schedule')} />
           <NavItem icon="bar-chart" label="Reports" active={pathname === '/admin/reports'} onPress={() => router.push('/admin/reports')} />
         </View>
 
+<<<<<<< HEAD
         <TouchableOpacity style={styles.logoutBtn} onPress={async () => { await auth.signOut(); router.replace('/'); }}>
+=======
+        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
           <Ionicons name="log-out-outline" size={18} color="#EF4444" />
           <Text style={styles.logoutText}>Sign Out</Text>
         </TouchableOpacity>
@@ -144,6 +207,7 @@ export default function ManageNurses() {
 
       {/* MAIN CONTENT */}
       <View style={styles.mainContent}>
+<<<<<<< HEAD
         <View style={styles.headerRow}>
           <View>
             <Text style={styles.headerTitle}>Staff Management</Text>
@@ -166,6 +230,42 @@ export default function ManageNurses() {
             <Text style={[styles.headLabel, { flex: 2 }]}>Staff Member</Text>
             <Text style={[styles.headLabel, { flex: 1.5 }]}>Linked Patient</Text>
             <Text style={[styles.headLabel, { flex: 1 }]}>RFID Tag</Text>
+=======
+        {/* TOP HEADER - Unified */}
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.headerTitle}>Nurse Directory</Text>
+            <Text style={styles.headerSubtitle}>Manage staff credentials and RFID tags</Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <View style={styles.searchBar}>
+              <Ionicons name="search" size={16} color="#94A3B8" />
+              <TextInput 
+                placeholder="Search staff..." 
+                style={styles.searchIn}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+            </View>
+
+            <TouchableOpacity onPress={() => router.push('/admin/profile')} style={styles.profileBox}>
+              <View style={styles.profileTextWrap}>
+                <Text style={styles.adminName}>Administrator</Text>
+                <Text style={styles.adminRole}>Super User</Text>
+              </View>
+              <View style={styles.profileCircle}><Text style={styles.profileInitial}>A</Text></View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* LIST CONTAINER */}
+        <View style={styles.listCard}>
+          <View style={styles.tableHead}>
+            <Text style={[styles.headLabel, { flex: 2 }]}>Staff Member</Text>
+            <Text style={[styles.headLabel, { flex: 1.5 }]}>Department</Text>
+            <Text style={[styles.headLabel, { flex: 1.5 }]}>RFID Tag</Text>
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
             <Text style={[styles.headLabel, { width: 80, textAlign: 'right' }]}>Actions</Text>
           </View>
 
@@ -187,6 +287,7 @@ export default function ManageNurses() {
                   </View>
                   
                   <View style={[styles.rowCell, { flex: 1.5 }]}>
+<<<<<<< HEAD
                     <Text style={styles.patientTableText}>{item.assignedPatientName || "No Patient"}</Text>
                   </View>
 
@@ -194,6 +295,15 @@ export default function ManageNurses() {
                     <View style={[styles.tagBadge, !item.rfidTag && styles.tagBadgeEmpty]}>
                       <Text style={[styles.tagText, !item.rfidTag && { color: '#EF4444' }]}>
                         {item.rfidTag || "None"}
+=======
+                    <Text style={styles.deptText}>{item.department}</Text>
+                  </View>
+
+                  <View style={[styles.rowCell, { flex: 1.5 }]}>
+                    <View style={[styles.tagBadge, !item.rfidTag && styles.tagBadgeEmpty]}>
+                      <Text style={[styles.tagText, !item.rfidTag && { color: '#EF4444' }]}>
+                        {item.rfidTag || "Unassigned"}
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
                       </Text>
                     </View>
                   </View>
@@ -213,11 +323,19 @@ export default function ManageNurses() {
         </View>
       </View>
 
+<<<<<<< HEAD
       {/* SEARCHABLE DROPDOWN MODAL */}
       <Modal visible={isEditModalVisible} animationType="fade" transparent>
         <BlurView intensity={20} tint="dark" style={styles.modalOverlay}>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalCard}>
             <Text style={styles.modalTitle}>Staff Assignment</Text>
+=======
+      {/* COMPACT EDIT MODAL */}
+      <Modal visible={isEditModalVisible} animationType="fade" transparent>
+        <BlurView intensity={20} tint="dark" style={styles.modalOverlay}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Update Staff Info</Text>
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
             
             <View style={styles.inputStack}>
               <Text style={styles.fieldLabel}>FULL NAME</Text>
@@ -226,6 +344,7 @@ export default function ManageNurses() {
                 value={selectedNurse?.fullName}
                 onChangeText={(t) => setSelectedNurse(p => p ? {...p, fullName: t} : null)}
               />
+<<<<<<< HEAD
 
               <Text style={styles.fieldLabel}>LINK PATIENT</Text>
               <View style={styles.dropdownContainer}>
@@ -271,6 +390,15 @@ export default function ManageNurses() {
                   </View>
                 )}
               </View>
+=======
+              
+              <Text style={styles.fieldLabel}>DEPARTMENT</Text>
+              <TextInput 
+                style={styles.modalIn}
+                value={selectedNurse?.department}
+                onChangeText={(t) => setSelectedNurse(p => p ? {...p, department: t} : null)}
+              />
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
 
               <Text style={styles.fieldLabel}>RFID TAG ID</Text>
               <View style={styles.tagInputWrap}>
@@ -278,18 +406,30 @@ export default function ManageNurses() {
                 <TextInput 
                   style={styles.tagIn}
                   value={selectedNurse?.rfidTag}
+<<<<<<< HEAD
                   placeholder="Input RFID"
+=======
+                  placeholder="Scan or type ID"
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
                   onChangeText={(t) => setSelectedNurse(p => p ? {...p, rfidTag: t} : null)}
                 />
               </View>
             </View>
 
             <View style={styles.modalFooter}>
+<<<<<<< HEAD
               <TouchableOpacity onPress={() => { setEditModalVisible(false); setDropdownVisible(false); }} style={styles.cancelBtn}>
                 <Text style={styles.cancelBtnText}>Discard</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleUpdate} style={styles.saveBtn}>
                 <Text style={styles.saveBtnText}>Apply Changes</Text>
+=======
+              <TouchableOpacity onPress={() => setEditModalVisible(false)} style={styles.cancelBtn}>
+                <Text style={styles.cancelBtnText}>Discard</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleUpdate} style={styles.saveBtn}>
+                <Text style={styles.saveBtnText}>Save Changes</Text>
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
@@ -308,6 +448,11 @@ const NavItem = ({ icon, label, active, onPress }: any) => (
 
 const styles = StyleSheet.create({
   container: { flex: 1, flexDirection: 'row', backgroundColor: '#F8FAFC' },
+<<<<<<< HEAD
+=======
+  
+  // Sidebar
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   sidebar: { width: 220, backgroundColor: '#fff', padding: 20, borderRightWidth: 1, borderRightColor: '#E2E8F0', justifyContent: 'space-between' },
   logoContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 30, gap: 8 },
   logoIcon: { backgroundColor: '#1a73e8', width: 30, height: 30, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
@@ -318,12 +463,32 @@ const styles = StyleSheet.create({
   navLabelActive: { color: '#1a73e8', fontWeight: '800' },
   logoutBtn: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10 },
   logoutText: { color: '#EF4444', fontWeight: '700', fontSize: 13 },
+<<<<<<< HEAD
+=======
+
+  // Main
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   mainContent: { flex: 1, padding: 32 },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
   headerTitle: { fontSize: 26, fontWeight: '900', color: '#0F172A' },
   headerSubtitle: { color: '#94A3B8', fontSize: 14, fontWeight: '600' },
+<<<<<<< HEAD
   searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', width: 280, paddingHorizontal: 15, height: 44, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0' },
   searchIn: { flex: 1, marginLeft: 10, fontSize: 13, color: '#0F172A' },
+=======
+  
+  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', width: 260, paddingHorizontal: 15, height: 42, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0' },
+  searchIn: { flex: 1, marginLeft: 10, fontSize: 13, color: '#0F172A' },
+
+  profileBox: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  profileTextWrap: { alignItems: 'flex-end' },
+  adminName: { fontSize: 14, fontWeight: '800', color: '#1E293B' },
+  adminRole: { fontSize: 11, fontWeight: '600', color: '#94A3B8' },
+  profileCircle: { width: 40, height: 40, borderRadius: 14, backgroundColor: '#0F172A', justifyContent: 'center', alignItems: 'center' },
+  profileInitial: { color: '#fff', fontWeight: '800', fontSize: 14 },
+
+  // List Card
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   listCard: { flex: 1, backgroundColor: '#fff', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: '#F1F5F9' },
   tableHead: { flexDirection: 'row', paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
   headLabel: { fontSize: 11, fontWeight: '800', color: '#CBD5E1', textTransform: 'uppercase', letterSpacing: 0.5 },
@@ -333,19 +498,31 @@ const styles = StyleSheet.create({
   avatarLetter: { color: '#1a73e8', fontWeight: '800', fontSize: 15 },
   nurseName: { fontSize: 14, fontWeight: '700', color: '#1E293B' },
   nurseEmail: { fontSize: 11, color: '#94A3B8', marginTop: 1 },
+<<<<<<< HEAD
   patientTableText: { fontSize: 13, color: '#475569', fontWeight: '600' },
+=======
+  deptText: { fontSize: 13, fontWeight: '600', color: '#475569' },
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   tagBadge: { backgroundColor: '#F1F5F9', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   tagBadgeEmpty: { backgroundColor: '#FEF2F2' },
   tagText: { fontSize: 11, fontWeight: '800', color: '#1a73e8' },
   actionCell: { width: 80, flexDirection: 'row', justifyContent: 'flex-end', gap: 10 },
   editBtn: { width: 32, height: 32, borderRadius: 10, backgroundColor: '#EFF6FF', justifyContent: 'center', alignItems: 'center' },
   deleteBtn: { width: 32, height: 32, borderRadius: 10, backgroundColor: '#FEF2F2', justifyContent: 'center', alignItems: 'center' },
+<<<<<<< HEAD
   modalOverlay: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   modalCard: { backgroundColor: '#fff', width: 380, padding: 28, borderRadius: 28, zIndex: 10 },
+=======
+
+  // Modal
+  modalOverlay: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  modalCard: { backgroundColor: '#fff', width: 360, padding: 28, borderRadius: 28 },
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   modalTitle: { fontSize: 20, fontWeight: '900', color: '#0F172A', marginBottom: 24, textAlign: 'center' },
   inputStack: { gap: 18 },
   fieldLabel: { fontSize: 10, fontWeight: '800', color: '#94A3B8', letterSpacing: 1 },
   modalIn: { backgroundColor: '#F8FAFC', padding: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0', fontWeight: '600', color: '#1E293B' },
+<<<<<<< HEAD
   dropdownContainer: { zIndex: 100 },
   dropdownTrigger: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#F8FAFC', padding: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0' },
   dropdownValue: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
@@ -357,6 +534,8 @@ const styles = StyleSheet.create({
   dropdownSearch: { padding: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9', fontSize: 12, backgroundColor: '#F8FAFC' },
   dropdownItem: { padding: 14, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
   dropdownItemText: { fontSize: 13, color: '#475569', fontWeight: '500' },
+=======
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
   tagInputWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F8FAFC', paddingHorizontal: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0' },
   tagIn: { flex: 1, padding: 14, fontWeight: '700', color: '#1a73e8' },
   modalFooter: { flexDirection: 'row', gap: 12, marginTop: 32 },

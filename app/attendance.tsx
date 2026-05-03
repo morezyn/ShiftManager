@@ -260,12 +260,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
+<<<<<<< HEAD
   statusEmoji: {
     fontSize: 100,
     textAlign: "center",
     top: -25,
     includeFontPadding: false, // Ensures vertical centering on Android
   },
+=======
+  statusEmoji: { fontSize: 64 },
+>>>>>>> 77244535c225289db5386e3d02e7e3733474121d
 
   welcomeBox: { alignItems: "center" },
   welcomeText: { color: "#fff", fontSize: 26, fontWeight: "bold" },
