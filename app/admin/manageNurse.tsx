@@ -125,7 +125,7 @@ export default function ManageNurses() {
                 <View style={[styles.rowCell, { flex: 1.5 }]}><Text style={styles.deptText}>{item.assignedPatientName || "No Patient"}</Text></View>
                 <View style={[styles.rowCell, { flex: 1 }]}><Text style={styles.tagText}>{item.rfidTag || "None"}</Text></View>
                 <View style={styles.actionCell}>
-                  <TouchableOpacity onPress={() => { setSelectedNurse(item); setEditModalVisible(true); }} style={styles.editBtn}><Ionicons name="pencil" size={14} color="#1a73e8" /></TouchableOpacity>
+                  <TouchableOpacity onPress={() => { setSelectedNurse(item); setPatientSearch(item.assignedPatientName || ''); setEditModalVisible(true); }} style={styles.editBtn}><Ionicons name="pencil" size={14} color="#1a73e8" /></TouchableOpacity>
                   <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteBtn}><Ionicons name="trash-outline" size={14} color="#EF4444" /></TouchableOpacity>
                 </View>
               </View>
@@ -146,19 +146,41 @@ export default function ManageNurses() {
               <TextInput style={styles.modalIn} value={selectedNurse?.rfidTag} placeholder="Enter RFID ID" onChangeText={(t) => setSelectedNurse(p => p ? {...p, rfidTag: t} : null)} />
 
               <Text style={styles.fieldLabel}>LINK PATIENT</Text>
-              <TouchableOpacity style={styles.dropdownTrigger} onPress={() => setDropdownVisible(!isDropdownVisible)}>
-                <Text style={styles.dropdownValue}>{selectedNurse?.assignedPatientName || "Select patient"}</Text>
-              </TouchableOpacity>
               
-              {isDropdownVisible && (
-                <View style={styles.dropdownContent}>
-                  <FlatList data={filteredPatients} renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.dropdownItem} onPress={() => { setSelectedNurse(prev => prev ? {...prev, assignedPatientId: item.id, assignedPatientName: item.name} : null); setDropdownVisible(false); }}>
-                      <Text>{item.name}</Text>
-                    </TouchableOpacity>
-                  )} />
-                </View>
-              )}
+              <View style={styles.dropdownWrapper}>
+                <TextInput 
+                  style={styles.modalIn} 
+                  placeholder="Search patients..."
+                  value={patientSearch}
+                  onChangeText={(t) => {
+                    setPatientSearch(t);
+                    setDropdownVisible(true);
+                  }}
+                  onFocus={() => setDropdownVisible(true)}
+                />
+
+                {isDropdownVisible && (
+                  <View style={styles.dropdownListContainer}>
+                    <FlatList 
+                      data={filteredPatients}
+                      keyExtractor={(item) => item.id}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity 
+                          style={styles.dropdownItem} 
+                          onPress={() => {
+                            setSelectedNurse(prev => prev ? {...prev, assignedPatientId: item.id, assignedPatientName: item.name} : null);
+                            setPatientSearch(item.name);
+                            setDropdownVisible(false);
+                          }}
+                        >
+                          <Text style={styles.dropdownValue}>{item.name}</Text>
+                        </TouchableOpacity>
+                      )}
+                      style={{ maxHeight: 150 }} 
+                    />
+                  </View>
+                )}
+              </View>
             </View>
             <View style={styles.modalFooter}>
               <TouchableOpacity onPress={() => setEditModalVisible(false)} style={styles.cancelBtn}><Text style={styles.cancelBtnText}>Discard</Text></TouchableOpacity>
@@ -213,10 +235,22 @@ const styles = StyleSheet.create({
   inputStack: { gap: 18 },
   fieldLabel: { fontSize: 10, fontWeight: '800', color: '#94A3B8', letterSpacing: 1 },
   modalIn: { backgroundColor: '#F8FAFC', padding: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0', fontWeight: '600', color: '#1E293B' },
-  dropdownTrigger: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#F8FAFC', padding: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0' },
+  dropdownWrapper: { width: '100%' },
+  dropdownListContainer: { 
+    backgroundColor: '#fff', 
+    borderWidth: 1, 
+    borderColor: '#E2E8F0', 
+    borderRadius: 12, 
+    marginTop: 8, 
+    overflow: 'hidden',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  dropdownItem: { paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
   dropdownValue: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
-  dropdownContent: { position: 'absolute', top: 120, left: 0, right: 0, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0', zIndex: 1000, elevation: 5 },
-  dropdownItem: { padding: 14, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
   modalFooter: { flexDirection: 'row', gap: 12, marginTop: 32 },
   cancelBtn: { flex: 1, padding: 16, borderRadius: 14, alignItems: 'center', backgroundColor: '#F1F5F9' },
   cancelBtnText: { color: '#64748B', fontWeight: '700' },
