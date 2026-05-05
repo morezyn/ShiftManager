@@ -142,6 +142,9 @@ export default function ManageNurses() {
               <Text style={styles.fieldLabel}>FULL NAME</Text>
               <TextInput style={styles.modalIn} value={selectedNurse?.fullName} onChangeText={(t) => setSelectedNurse(p => p ? {...p, fullName: t} : null)} />
               
+              <Text style={styles.fieldLabel}>RFID TAG</Text>
+              <TextInput style={styles.modalIn} value={selectedNurse?.rfidTag} placeholder="Enter RFID ID" onChangeText={(t) => setSelectedNurse(p => p ? {...p, rfidTag: t} : null)} />
+
               <Text style={styles.fieldLabel}>LINK PATIENT</Text>
               <TouchableOpacity style={styles.dropdownTrigger} onPress={() => setDropdownVisible(!isDropdownVisible)}>
                 <Text style={styles.dropdownValue}>{selectedNurse?.assignedPatientName || "Select patient"}</Text>
@@ -212,7 +215,7 @@ const styles = StyleSheet.create({
   modalIn: { backgroundColor: '#F8FAFC', padding: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0', fontWeight: '600', color: '#1E293B' },
   dropdownTrigger: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#F8FAFC', padding: 14, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0' },
   dropdownValue: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
-  dropdownContent: { position: 'absolute', top: 55, left: 0, right: 0, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0', zIndex: 1000, elevation: 5 },
+  dropdownContent: { position: 'absolute', top: 120, left: 0, right: 0, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0', zIndex: 1000, elevation: 5 },
   dropdownItem: { padding: 14, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
   modalFooter: { flexDirection: 'row', gap: 12, marginTop: 32 },
   cancelBtn: { flex: 1, padding: 16, borderRadius: 14, alignItems: 'center', backgroundColor: '#F1F5F9' },
